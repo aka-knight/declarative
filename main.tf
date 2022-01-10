@@ -2,15 +2,10 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "example" {
-  name     = "my-new-RG"
-  location = "East US"
-}
-
 resource "azurerm_kubernetes_cluster" "example" {
   name                = "example-aks1"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+  location            = "East US"
+  resource_group_name = "my-new-RG"
   dns_prefix          = "exampleaks1"
 
   default_node_pool {
