@@ -1,24 +1,34 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-trigger:
-- main
-
-pool:
-  vmImage: ubuntu-latest
-
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-- task: TerraformTaskV2@2
-  inputs:
-    provider: 'azurerm'
-    command: 'init'
-    backendServiceArm: 'azure'
-    backendAzureRmResourceGroupName: 'my-new-RG'
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: main
+jobs:
+- job: Job_1
+  displayName: Agent job 1
+  pool:
+    vmImage: windows-2019
+  steps:
+  - checkout: self
+    clean: true
+  - task: TerraformInstaller@0
+    displayName: Install Terraform latest
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform : init'
+    inputs:
+      backendServiceArm: 897429ff-fb3a-4fb4-9789-0204b899cd99
+      backendAzureRmResourceGroupName: my-new-RG
+      backendAzureRmStorageAccountName: csg1003200158a3aae7
+      backendAzureRmContainerName: terraform
+      backendAzureRmKey: terraform.tfstate
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform : plan'
+    inputs:
+      command: plan
+      environmentServiceNameAzureRM: 897429ff-fb3a-4fb4-9789-0204b899cd99
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform : apply'
+    inputs:
+      command: apply
+      environmentServiceNameAzureRM: 897429ff-fb3a-4fb4-9789-0204b899cd99
+...
